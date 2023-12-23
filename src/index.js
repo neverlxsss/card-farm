@@ -18,6 +18,8 @@ const readMafiles = async () => {
     const files = await fs.readdir(mafilesFolder);
 
     for (const file of files) {
+        if (!file.toLowerCase().includes(".mafile"))
+            continue;
         const content = JSON.parse((await fs.readFile(`${mafilesFolder}/${file}`)).toString())
 
         try {
@@ -49,15 +51,11 @@ const readAccounts = async () => {
             farmed: false,
         };
     });
-
-    if (!gAccounts.length) {
-        console.log("Accounts in 'accounts.txt' are required")
-    }
 }
 
 const farm = (async (cookies) => {
     // Launch the browser and open a new blank page
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({headless: "new"});
     const page = await browser.newPage();
 
     // Navigate the page to a URL
@@ -131,7 +129,7 @@ const trade = async (login) => {
     });
 
     community.setCookies(gAccounts[login].cookies);
-    manager.setCookies(gAccounts[login].cookies, function (err) {
+    manager.setCookies(gAccounts[login].cookies, async function (err) {
         if (err) {
             console.log(err);
             process.exit(1); // Fatal error since we couldn't get our API key
@@ -197,8 +195,9 @@ const main = async () => {
             await sleep(100);
         }
 
-        await farm([{'name': "steamLoginSecure", 'value': gAccounts[login].steamLoginSecure}])
+        // await farm([{'name': "steamLoginSecure", 'value': gAccounts[login].steamLoginSecure}])
         await trade(login)
+        await sleep(2500)
     }
 
     process.exit(0)
