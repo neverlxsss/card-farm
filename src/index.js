@@ -195,7 +195,7 @@ const main = async () => {
             await sleep(100);
         }
 
-        // await farm([{'name': "steamLoginSecure", 'value': gAccounts[login].steamLoginSecure}])
+        await farm([{'name': "steamLoginSecure", 'value': gAccounts[login].steamLoginSecure}])
         await trade(login)
         await sleep(2500)
     }
